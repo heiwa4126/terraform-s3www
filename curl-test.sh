@@ -1,2 +1,2 @@
 #!/bin/sh -ue
-curl $(terraform output -raw s3wwwurl)
+curl -vi $(terraform output -raw s3wwwurl)

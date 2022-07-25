@@ -24,8 +24,9 @@ provider "aws" {
   region = var.aws_region
   default_tags {
     tags = {
-      mail        = var.author_mail
-      provided_by = "Terraform"
+      mail         = var.author_mail
+      project_name = "s3www"
+      provided_by  = "Terraform"
     }
   }
 }
