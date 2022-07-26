@@ -1,0 +1,9 @@
+# -*- mode: terraform -*-
+terraform {
+  backend "s3" {
+    region         = "ap-northeast-3"
+    bucket         = "xxxxxxxxx"
+    dynamodb_table = "xxxxxxxxx"
+    key            = "xxxxxxxxx.tfstat"
+  }
+}

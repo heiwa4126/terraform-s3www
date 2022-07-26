@@ -25,10 +25,19 @@ resource "aws_s3_bucket_public_access_block" "www" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_acl" "www" {
+# ACL無効
+# ACLを一切使わない。ポリシーのみで制御。最近の流行
+resource "aws_s3_bucket_ownership_controls" "www" {
   bucket = aws_s3_bucket.www.id
-  acl    = "private"
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
+
+# resource "aws_s3_bucket_acl" "www" {
+#   bucket = aws_s3_bucket.www.id
+#   acl    = "private"
+# }
 
 resource "aws_s3_bucket_policy" "www" {
   bucket = aws_s3_bucket.www.id
