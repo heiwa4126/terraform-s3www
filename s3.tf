@@ -49,7 +49,7 @@ resource "aws_s3_bucket_policy" "www" {
         "Effect" : "Allow",
         "Principal" : "*",
         "Action" : "s3:GetObject",
-        "Resource" : "arn:aws:s3:::ota-s3www-www/*"
+        "Resource" : "${aws_s3_bucket.www.arn}/*"
       }
     ]
   })
