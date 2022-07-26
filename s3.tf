@@ -1,10 +1,49 @@
+# tfsec:ignore:aws-s3-enable-versioning tfsec:ignore:aws-s3-enable-bucket-logging
 resource "aws_s3_bucket" "www" {
   bucket = "${local.prefix}www"
+}
+
+# 自前のキーにするとお金がちょっとかかるので
+# tfsec:ignore:aws-s3-encryption-customer-key
+resource "aws_s3_bucket_server_side_encryption_configuration" "www" {
+  bucket = aws_s3_bucket.www.bucket
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+# バケットポリシーのみで外部公開にする
+# tfsec:ignore:aws-s3-no-public-buckets
+resource "aws_s3_bucket_public_access_block" "www" {
+  depends_on              = [aws_s3_bucket_policy.www]
+  bucket                  = aws_s3_bucket.www.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = false
 }
 
 resource "aws_s3_bucket_acl" "www" {
   bucket = aws_s3_bucket.www.id
   acl    = "private"
+}
+
+resource "aws_s3_bucket_policy" "www" {
+  bucket = aws_s3_bucket.www.id
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "PublicReadGetObject",
+        "Effect" : "Allow",
+        "Principal" : "*",
+        "Action" : "s3:GetObject",
+        "Resource" : "arn:aws:s3:::ota-s3www-www/*"
+      }
+    ]
+  })
 }
 
 resource "aws_s3_bucket_website_configuration" "www" {

@@ -3,6 +3,11 @@
 Terraformでs3バケットをwww公開するサンプル。
 s3にコンテンツも流し込む。
 
+# 参考
+
+- [チュートリアル: Amazon S3 での静的ウェブサイトの設定 \- Amazon Simple Storage Service](https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/HostingWebsiteOnS3Setup.html)
+- [terraform-aws-s3-bucket/examples/complete at v3.3.0 · terraform-aws-modules/terraform-aws-s3-bucket](https://github.com/terraform-aws-modules/terraform-aws-s3-bucket/tree/v3.3.0/examples/complete)
+
 
 # deploy
 
