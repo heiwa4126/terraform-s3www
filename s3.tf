@@ -15,7 +15,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "www" {
 }
 
 # バケットポリシーのみで外部公開にする
-# jfsec:ignore:aws-s3-no-public-buckets
+# tfsec:ignore:aws-s3-no-public-buckets
 resource "aws_s3_bucket_public_access_block" "www" {
   depends_on              = [aws_s3_bucket_policy.www]
   bucket                  = aws_s3_bucket.www.id
@@ -96,7 +96,7 @@ resource "aws_s3_object" "www" {
 
   etag         = filemd5("${path.root}/contents/${each.value}")
   content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.value), null)
-  acl          = "public-read"
+  # acl          = "public-read"  # ACLを使わない設定にしたので設定できない
 }
 
 output "s3wwwurl" {
