@@ -99,7 +99,12 @@ resource "aws_s3_object" "www" {
   # acl          = "public-read"  # ACLを使わない設定にしたので設定できない
 }
 
+#--------
 output "s3wwwurl" {
   description = "URL of S3 bucket to hold website content"
   value       = "http://${aws_s3_bucket_website_configuration.www.website_endpoint}/"
+}
+
+output "objecturl" {
+  value = "https://${aws_s3_bucket.www.bucket_regional_domain_name}/index.html"
 }
