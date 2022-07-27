@@ -27,9 +27,15 @@ def perline(l: str):
 
 
 def main():
+    # parse
     with open("/etc/mime.types") as f:
         for l in f:
             perline(l)
+
+    # # some specials
+    # h["ico"] = "image/vnd.microsoft.icon"
+
+    # output
     print(
         """locals {
   mime_types = {"""
