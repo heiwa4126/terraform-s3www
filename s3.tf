@@ -17,12 +17,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "www" {
 # バケットポリシーのみで外部公開にする
 # tfsec:ignore:aws-s3-no-public-buckets
 resource "aws_s3_bucket_public_access_block" "www" {
-  depends_on              = [aws_s3_bucket_policy.www]
   bucket                  = aws_s3_bucket.www.id
   block_public_acls       = true
-  block_public_policy     = true
+  block_public_policy     = false # これをtrueにすると、バケットポリシーが設定できない
   ignore_public_acls      = true
-  restrict_public_buckets = false
+  restrict_public_buckets = false # これをtrueにすると、バケットポリシーで制御できなくなる
 }
 
 # ACL無効
@@ -39,24 +38,23 @@ resource "aws_s3_bucket_ownership_controls" "www" {
 #   acl    = "private"
 # }
 
-# block_public_policy=trueなので
-# 最初に設定したら後から変更できないことに注意。
-# コンソールで一旦「新しいパブリックバケットポリシーまたはアクセスポイントポリシーを介して付与されたバケットとオブジェクトへのパブリックアクセスをブロックする」(長い) のチェックをはずして、
-# バケットポリシーを修正した後、チェックをつける必要がある。
 resource "aws_s3_bucket_policy" "www" {
-  bucket = aws_s3_bucket.www.id
-  policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Sid" : "PublicReadGetObject",
-        "Effect" : "Allow",
-        "Principal" : "*",
-        "Action" : "s3:GetObject",
-        "Resource" : "${aws_s3_bucket.www.arn}/*"
-      }
-    ]
-  })
+  depends_on = [aws_s3_bucket_public_access_block.www] # 先にpublic_access_blockを設定する。
+  bucket     = aws_s3_bucket.www.id
+  policy     = data.aws_iam_policy_document.www.json
+}
+
+data "aws_iam_policy_document" "www" {
+  statement {
+    sid       = "PublicReadGetObject"
+    actions   = ["s3:GetObject"]
+    effect    = "Allow"
+    resources = ["${aws_s3_bucket.www.arn}/*"]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+  }
 }
 
 resource "aws_s3_bucket_website_configuration" "www" {
